@@ -14,5 +14,4 @@ router
   .delete(deleteTickget)
 
 
-
 module.exports = router;

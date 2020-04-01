@@ -1,6 +1,8 @@
 const express  = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const cors = require('cors');
+const errorHandler = require('./middleware/error');
 const connectDB = require('./config/db')
 
 
@@ -16,6 +18,8 @@ const tickets = require('./routes/tickets');
 
 const app = express();
 
+app.use(cors());
+
 //BOdy parser
 app.use(express.json());
 
@@ -27,6 +31,7 @@ if(process.env.NODE_ENV === 'development'){
 //MOunt routers
 app.use('/api/v1/tickets', tickets);
 
+app.use(errorHandler);
 
 
 
