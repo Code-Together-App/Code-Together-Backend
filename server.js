@@ -17,6 +17,7 @@ connectDB();
 
 //ROute files
 const tickets = require('./routes/tickets');
+const auth = require('./routes/auth');
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use(express.static(path.join(__dirname,'public')));
 
 //MOunt routers
 app.use('/api/v1/tickets', tickets);
+app.use('/api/v1/auth',auth)
 
 app.use(errorHandler);
 
