@@ -42,6 +42,11 @@ const UserSchema = new mongoose.Schema({
     return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_EXPIRE
     })
+  };
+
+  //Match user entered password to hashed password in database
+  UserSchema.methods.matchPassword = async function(enteredPassword) {
+    return await bcrypt.compare(enteredPassword,this.password);
   }
 
 

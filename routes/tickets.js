@@ -4,18 +4,20 @@ const Ticket = require('../models/Tickets');
 const advancedResults = require('../middleware/advancedResults');
 const router = express.Router();
 
+const { protect, authorize } = require('../middleware/auth');
+
 router
   .route('/')
   .get(advancedResults(Ticket),getTickgets)
-  .post(createTickget)
+  .post(protect,authorize('admin'), createTickget)
 
-router.route('/:id/photo').put(ticketPhotoUpload);
+router.route('/:id/photo').put(protect, authorize('admin'), ticketPhotoUpload);
 
 router
   .route('/:id')
   .get(getTickget)
-  .put(updateTickget)
-  .delete(deleteTickget)
+  .put(protect, authorize('admin'), updateTickget)
+  .delete(protect, authorize('admin'), deleteTickget)
 
-
+ 
 module.exports = router;
