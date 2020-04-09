@@ -3,13 +3,13 @@ const Ticket = require ('../models/Tickets');
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
 
-exports.getTickgets = asyncHandler(async (req,res,next) => {
+exports.getTickets = asyncHandler(async (req,res,next) => {
     
     res.status(200).json(res.advancedResults);
  
 });
 
-exports.getTickget = asyncHandler(async(req,res,next) => {
+exports.getTicket = asyncHandler(async(req,res,next) => {
     const ticket = await Ticket.findById(req.params.id);
 
     if(!ticket){
@@ -19,7 +19,10 @@ exports.getTickget = asyncHandler(async(req,res,next) => {
     res.status(200).json({success:true, data:ticket })
 });
 
-exports.createTickget = asyncHandler(async (req,res,next) => {
+exports.createTicket = asyncHandler(async (req,res,next) => {
+    //Add user to req.body
+    req.body.user = req.user.id;
+
     const ticket = await Ticket.create(req.body);
   
     res.status(201).json({
@@ -28,25 +31,39 @@ exports.createTickget = asyncHandler(async (req,res,next) => {
   
 });
 
-exports.updateTickget = asyncHandler(async(req,res,next) => {
-    const ticket = await Ticket.findByIdAndUpdate(req.params.id,req.body,{
-      runValidators:true
-    });
+exports.updateTicket = asyncHandler(async(req,res,next) => {
+    let ticket = await Ticket.findById(req.params.id)
+
     if(!ticket) {
       return next(new ErrorResponse(`Ticket not found with id of ${req.params.id}`,404));
     }
-  
+
+    //Make sure user is ticket owner
+    if(ticket.user.toString() !== req.user.id && req.user.role !== 'admin') {
+      return next(new ErrorResponse(`User ${ req.params.id} is not authorized to updated this ticket`,401));
+    }
+
+    ticket = await Ticket.findOneAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators:true
+    })
+    
     res.status(200).json({success:true, data:ticket })
 });
 
 
-exports.deleteTickget = asyncHandler(async(req,res,next) => {
-    const ticket = await Ticket.findByIdAndDelete(req.params.id);
+exports.deleteTicket = asyncHandler(async(req,res,next) => {
+    const ticket = await Ticket.findById(req.params.id);
 
     if(!ticket) {
       return next(new ErrorResponse(`Ticket not found with id of ${req.params.id}`,404));
     }
-  
+  //Make sure user is ticket owner
+  if(ticket.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(new ErrorResponse(`User ${ req.params.id} is not authorized to delete this ticket`,401));
+  }
+  ticket.remove();
+
     res.status(200).json({success:true, data:{} })
 });
 
