@@ -9,6 +9,10 @@ const TicketSchema = new mongoose.Schema({
     type:String,
     required: [true, 'Please describe the task']
   },
+  status:{
+    type:String,
+    required: [true, 'Please assign status for the ticket']
+  },
   createdAt:{
     type: Date,
     default: Date.now

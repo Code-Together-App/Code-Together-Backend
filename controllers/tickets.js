@@ -77,6 +77,11 @@ exports.ticketPhotoUpload = asyncHandler(async(req,res,next) => {
     return next(new ErrorResponse(`Ticket not found with id of ${req.params.id}`,404));
   }
 
+  //Make sure user is ticket owner
+  if(ticket.user.toString() !== req.user.id && req.user.role !== 'admin') {
+    return next(new ErrorResponse(`User ${ req.params.id} is not authorized to update this ticket`,401));
+  }
+
   if(!req.files) {
     return next(new ErrorResponse(`Please upload a file`,400));
   }
