@@ -1,6 +1,6 @@
 # Code-Together-Backend
 
-> Backend API for CodeTogether application, which is a ticketking website
+> REST API for a work collabaration ticket system.
 
 ## Usage
 
